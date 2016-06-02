@@ -11,13 +11,38 @@ System.register(['angular2/core'], function(exports_1, context_1) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var core_1;
-    var AppComponent, Keg;
+    var kegListComponent, AppComponent, Keg;
     return {
         setters:[
             function (core_1_1) {
                 core_1 = core_1_1;
             }],
         execute: function() {
+            // all the info in here was done first. after cloning project template // Start with parent and then child. They are not in order in here thought //
+            // **************************************************************************************************************** //
+            // CHILD COMPONENT ///
+            // Made this component after parent //
+            kegListComponent = (function () {
+                function kegListComponent() {
+                }
+                kegListComponent.prototype.kegClicked = function (clickedKeg) {
+                    console.log(clickedKeg);
+                };
+                kegListComponent = __decorate([
+                    // this line was here from the very beggining //
+                    core_1.Component({
+                        selector: 'keg-list',
+                        inputs: ['kegList'],
+                        template: "\n  <h3 *ngFor=\"#currentKeg of kegList\"(click)=\"kegClicked(currentKeg)\"> {{currentKeg.beerName}}</h3>\n  "
+                    }), 
+                    __metadata('design:paramtypes', [])
+                ], kegListComponent);
+                return kegListComponent;
+            }());
+            exports_1("kegListComponent", kegListComponent);
+            // *************************************************************************************************************** //
+            // PARENT COMPONENT ///
+            // Made this component first //
             AppComponent = (function () {
                 function AppComponent() {
                     this.kegs = [
@@ -33,7 +58,14 @@ System.register(['angular2/core'], function(exports_1, context_1) {
                 AppComponent = __decorate([
                     core_1.Component({
                         selector: 'my-app',
-                        template: "\n<div class=\"container\">\n  <h1> Tap a Keg </h1>\n  <h3 *ngFor=\"#keg of kegs\"(click)=\"kegWasSelected(keg)\"> {{keg.beerName}}</h3>\n  "
+                        //   template: `
+                        // <div class="container">
+                        //   <h1> Tap a Keg </h1>
+                        //   <h3 *ngFor="#keg of kegs"(click)="kegWasSelected(keg)"> {{keg.beerName}}</h3>
+                        //   `
+                        // this four lines above might have been optional.
+                        directives: [kegListComponent],
+                        template: "\n   <div class=\"container\">\n   <h1> Tap a Keg </h1>\n   <keg-list [kegList]=\"kegs\"></keg-list>\n  "
                     }), 
                     __metadata('design:paramtypes', [])
                 ], AppComponent);

@@ -1,20 +1,52 @@
-import { Component } from 'angular2/core';
+import { Component } from 'angular2/core'; // this line was here from the very beggining //
+
+// all the info in here was done first. after cloning project template // Start with parent and then child. They are not in order in here thought //
+
+// **************************************************************************************************************** //
+                                        // CHILD COMPONENT ///
+// Made this component after parent //
 
 @Component({
-  selector: 'my-app',
+  selector: 'keg-list',
+  inputs: ['kegList'],
   template: `
-<div class="container">
-  <h1> Tap a Keg </h1>
-  <h3 *ngFor="#keg of kegs"(click)="kegWasSelected(keg)"> {{keg.beerName}}</h3>
+  <h3 *ngFor="#currentKeg of kegList"(click)="kegClicked(currentKeg)"> {{currentKeg.beerName}}</h3>
   `
-
-  // keg OF kegs. You need the word of or otherwise it won't work //
-  // This h3 started without the ngFor. It was added later to go through all the kegs //
+  // You need the word OF in currentKeg of kegList //
   // *ngFor is a directive //
-  // the (click) = ="kegWasSelected(keg)" part was added after i finished the kegWasSelected in blue way below //
 })
 
-export class AppComponent {
+export class kegListComponent {
+  public kegList: Keg[];
+  kegClicked(clickedKeg: Keg): void{ // click event for child
+    console.log(clickedKeg);
+  }
+}
+
+// *************************************************************************************************************** //
+                                      // PARENT COMPONENT ///
+
+// Made this component first //
+
+@Component({ // parent component
+  selector: 'my-app',
+//   template: `
+// <div class="container">
+//   <h1> Tap a Keg </h1>
+//   <h3 *ngFor="#keg of kegs"(click)="kegWasSelected(keg)"> {{keg.beerName}}</h3>
+//   `
+// this four lines above might have been optional.
+  directives: [kegListComponent],
+  template: `
+   <div class="container">
+   <h1> Tap a Keg </h1>
+   <keg-list [kegList]="kegs"></keg-list>
+  `
+  //the "kegs" word in here is coming from the public kegs: in the export class below //
+   // kegLIst came from above in the children component //
+})
+
+export class AppComponent { // parent class definition
   public kegs: Keg[];  // change Keg to empty array // update keg to kegs becuase it is an array of kegs now //
   constructor() {
     this.kegs = [
