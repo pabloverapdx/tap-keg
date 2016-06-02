@@ -11,29 +11,54 @@ System.register(['angular2/core'], function(exports_1, context_1) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var core_1;
-    var kegListComponent, AppComponent, Keg;
+    var kegComponent, kegListComponent, AppComponent, Keg;
     return {
         setters:[
             function (core_1_1) {
                 core_1 = core_1_1;
             }],
         execute: function() {
+            // EventEmitter lets components share information - talk to each other //
             // all the info in here was done first. after cloning project template // Start with parent and then child. They are not in order in here thought //
+            // To summarize, to add a child component to a parent component, we need to follow these steps:
+            // Create the child component's @Component decorator and Controller class.
+            // If the component needs to receive data from a parent component, define an input for it and an accompanying property to store the input in
+            // *********************************************************************************
+            // Grandchild //
+            kegComponent = (function () {
+                function kegComponent() {
+                }
+                kegComponent = __decorate([
+                    // this line was here from the very beggining //
+                    core_1.Component({
+                        selector: 'keg-display',
+                        inputs: ['keg'],
+                        template: "\n  <h3>{{ keg.beerName }}</h3>\n  "
+                    }), 
+                    __metadata('design:paramtypes', [])
+                ], kegComponent);
+                return kegComponent;
+            }());
+            exports_1("kegComponent", kegComponent);
             // **************************************************************************************************************** //
             // CHILD COMPONENT ///
             // Made this component after parent //
             kegListComponent = (function () {
                 function kegListComponent() {
+                    this.onKegSelect = new core_1.EventEmitter();
                 }
                 kegListComponent.prototype.kegClicked = function (clickedKeg) {
-                    console.log(clickedKeg);
+                    console.log('child', 'clickedKeg');
+                    this.selectedKeg = clickedKeg; // this line was added to select kegs and change their font color //
+                    this.onKegSelect.emit(clickedKeg);
                 };
                 kegListComponent = __decorate([
-                    // this line was here from the very beggining //
                     core_1.Component({
                         selector: 'keg-list',
                         inputs: ['kegList'],
-                        template: "\n  <h3 *ngFor=\"#currentKeg of kegList\"(click)=\"kegClicked(currentKeg)\"> {{currentKeg.beerName}}</h3>\n  "
+                        outputs: ['onKegSelect'],
+                        directives: [kegComponent],
+                        template: "\n  <keg-display *ngFor=\"#currentKeg of kegList\"(click)=\"kegClicked(currentKeg)\"\n  [class.selected]=\"currentKeg === selectedKeg\"> {{currentKeg.beerName}}</keg-display>\n  "
                     }), 
                     __metadata('design:paramtypes', [])
                 ], kegListComponent);
@@ -65,7 +90,7 @@ System.register(['angular2/core'], function(exports_1, context_1) {
                         //   `
                         // this four lines above might have been optional.
                         directives: [kegListComponent],
-                        template: "\n   <div class=\"container\">\n   <h1> Tap a Keg </h1>\n   <keg-list [kegList]=\"kegs\"></keg-list>\n  "
+                        template: "\n   <div class=\"container\">\n   <h1> Tap a Keg </h1>\n   <keg-list [kegList]=\"kegs\" (onKegSelect)=\"kegWasSelected($event)\">\n   </keg-list>\n  "
                     }), 
                     __metadata('design:paramtypes', [])
                 ], AppComponent);
