@@ -5,11 +5,13 @@ import { Component } from 'angular2/core';
   template: `
 <div class="container">
   <h1> Tap a Keg </h1>
-  <h3 *ngFor="#keg of kegs"> {{keg.beerName}}</h3>
+  <h3 *ngFor="#keg of kegs"(click)="kegWasSelected(keg)"> {{keg.beerName}}</h3>
   `
+
   // keg OF kegs. You need the word of or otherwise it won't work //
   // This h3 started without the ngFor. It was added later to go through all the kegs //
   // *ngFor is a directive //
+  // the (click) = ="kegWasSelected(keg)" part was added after i finished the kegWasSelected in blue way below //
 })
 
 export class AppComponent {
@@ -21,6 +23,9 @@ export class AppComponent {
     new Keg("Double Mountain", 2),
     new Keg("Crux", 3),
     ];
+  }
+  kegWasSelected(clickedKeg: Keg): void{ // This is a built in click event //
+    console.log(clickedKeg);
   }
 }
 
